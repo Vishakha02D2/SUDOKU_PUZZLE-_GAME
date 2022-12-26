@@ -1,5 +1,6 @@
 
 import static java.awt.Color.*;
+import java.util.HashMap;
 import java.util.Stack;
 //import static java.awt.Color.blue;
 import javax.swing.JButton;
@@ -15,10 +16,12 @@ import javax.swing.JOptionPane;
 public class SUDOKU_FRAME2 extends javax.swing.JFrame {
 
       private String number;
-   //  private Stack<JButton> st =new Stack<>();
+   
       private boolean globalVar = false;
       
-      private String solvedBoard [][] = {
+      private Stack<HashMap<JButton,String>>st=new Stack<HashMap<JButton,String>>(); //creating stack with HashMap
+      
+      private String solvedBoard [][] = {                              //use Solved 2DMatrix solved sudoboard
           {"2","9","8","5","1","6","7","3","4"},
           {"4","1","3","2","7","8","5","6","9"},
           {"7","5","6","3","4","9","1","2","8"},
@@ -35,7 +38,46 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         initComponents();
          
     }
-
+  
+    private void Undo(){
+        
+        if(st.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please enter a value first before using the undo functionality ","Sudoku Game1",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            
+            HashMap<JButton,String> deleted = st.pop();//deleted(r5c5,4)
+            HashMap.Entry<JButton,String>entry = deleted.entrySet().stream().findFirst().get();
+            JButton deletedBtn = entry.getKey();//r5c5
+            boolean flag = false;
+            Stack<HashMap<JButton,String>> tempSt=new Stack<HashMap<JButton,String>>(); 
+      
+             
+           while(!st.isEmpty()){
+                 
+            HashMap<JButton,String> temp = st.pop();//temp(r5c5,2)
+            tempSt.push(temp);
+            
+            HashMap.Entry<JButton,String> entry1 = deleted.entrySet().stream().findFirst().get();
+            JButton comparedBtn = entry.getKey(); //r5c4
+             String value = entry1.getValue();    //2
+             
+             if(deletedBtn == comparedBtn){
+                 flag = true;
+                 comparedBtn.setText(value);
+                 break;
+             }
+           }
+           
+           if(flag == false){
+               deletedBtn.setText("");
+           }
+           while(!tempSt.isEmpty()){
+               
+               HashMap<JButton,String> temp = tempSt.pop();
+               st.push(temp);
+           }
+         }
+    }
     public void chooseNumber(JButton btn){
         
         SelectionButton1.setBackground(black);
@@ -177,6 +219,7 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
                     }
                 }
             }
+        st.clear();
     }
 
     
@@ -184,7 +227,7 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         
     
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jPanel13 = new javax.swing.JPanel();
@@ -295,6 +338,7 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         r9c6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel13.setPreferredSize(new java.awt.Dimension(126, 126));
@@ -1392,6 +1436,11 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         UndoButton.setBackground(new java.awt.Color(255, 255, 0));
         UndoButton.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
         UndoButton.setText("UNDO");
+        UndoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UndoButtonActionPerformed(evt);
+            }
+        });
 
         jButton136.setBackground(new java.awt.Color(255, 153, 51));
         jButton136.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
@@ -1667,548 +1716,691 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void SelectionButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton2ActionPerformed
+    private void SelectionButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "2";
         chooseNumber(SelectionButton2);
 
-    }//GEN-LAST:event_SelectionButton2ActionPerformed
+    }                                                
 
-    private void SelectionButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton1ActionPerformed
+    private void SelectionButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "1";
         chooseNumber(SelectionButton1);
-    }//GEN-LAST:event_SelectionButton1ActionPerformed
+    }                                                
 
-    private void SelectionButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton4ActionPerformed
+    private void SelectionButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "4";
         chooseNumber(SelectionButton4);
-    }//GEN-LAST:event_SelectionButton4ActionPerformed
+    }                                                
 
-    private void SelectionButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton3ActionPerformed
+    private void SelectionButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "3";
         chooseNumber(SelectionButton3);
-    }//GEN-LAST:event_SelectionButton3ActionPerformed
+    }                                                
 
-    private void r5c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c5ActionPerformed
+    private void r5c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
 
         r5c5.setBackground(white);
         r5c5.setText(number);
-    }//GEN-LAST:event_r5c5ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r5c5,number);
+        st.push(hm);
+    }                                    
 
-    private void SelectionButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton6ActionPerformed
+    private void SelectionButton6ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "6";
         chooseNumber(SelectionButton6);
-    }//GEN-LAST:event_SelectionButton6ActionPerformed
+    }                                                
 
-    private void r9c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c9ActionPerformed
+    private void r9c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
      
              
-      r9c9.setBackground(white);
-      r9c9.setText(number);
-    }//GEN-LAST:event_r9c9ActionPerformed
+        r9c9.setBackground(white);
+        r9c9.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r9c9,number);
+        st.push(hm);
+    }                                    
 
-    private void r3c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c9ActionPerformed
+    private void r3c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-       r3c9.setBackground(white);
-       r3c9.setText(number);
-    }//GEN-LAST:event_r3c9ActionPerformed
+        r3c9.setBackground(white);
+        r3c9.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r3c9,number);
+        st.push(hm);
 
-    private void r6c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c9ActionPerformed
-      r6c9.setBackground(white);
-      r6c9.setText(number);
-    }//GEN-LAST:event_r6c9ActionPerformed
+    }                                    
 
-    private void SelectionButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton5ActionPerformed
+    private void r6c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+        r6c9.setBackground(white);
+        r6c9.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c9,number);
+        st.push(hm);
+    }                                    
+
+    private void SelectionButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "5";
         chooseNumber(SelectionButton5);
-    }//GEN-LAST:event_SelectionButton5ActionPerformed
+    }                                                
 
-    private void SelectionButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton7ActionPerformed
+    private void SelectionButton7ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "7";
         chooseNumber(SelectionButton7);
-    }//GEN-LAST:event_SelectionButton7ActionPerformed
+    }                                                
 
-    private void SelectionButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton8ActionPerformed
+    private void SelectionButton8ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "8";
         chooseNumber(SelectionButton8);
-    }//GEN-LAST:event_SelectionButton8ActionPerformed
+    }                                                
 
-    private void SelectionButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectionButton9ActionPerformed
+    private void SelectionButton9ActionPerformed(java.awt.event.ActionEvent evt) {                                                 
 
         number = "9";
         chooseNumber(SelectionButton9);
-    }//GEN-LAST:event_SelectionButton9ActionPerformed
+    }                                                
 
-    private void r5c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c6ActionPerformed
+    private void r5c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
         r5c6.setBackground(white);
         r5c6.setText(number);
-    }//GEN-LAST:event_r5c6ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r5c6,number);
+        st.push(hm);
+    }                                    
 
-    private void r6c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c6ActionPerformed
+    private void r6c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
         r6c6.setBackground(white);
         r6c6.setText(number);
-    }//GEN-LAST:event_r6c6ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c6,number);
+        st.push(hm);
+    }                                    
 
-    private void r5c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c4ActionPerformed
+    private void r5c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-        r5c4.setBackground(white);
+       r5c4.setBackground(white);
         r5c4.setText(number);
-    }//GEN-LAST:event_r5c4ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r5c4,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c4ActionPerformed
+    private void r4c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
         r4c4.setBackground(white);
         r4c4.setText(number);
-    }//GEN-LAST:event_r4c4ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c4,number);
+        st.push(hm);
+    }                                    
 
-    private void r1c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c1ActionPerformed
-        
+    private void r1c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
         r1c1.setBackground(white);
         r1c1.setText(number);
-    }//GEN-LAST:event_r1c1ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r1c1,number);
+        st.push(hm);
+    }                                    
 
-    private void r1c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c2ActionPerformed
+    private void r1c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-        
-        r1c2.setBackground(white);
+       r1c2.setBackground(white);
         r1c2.setText(number);
-    }//GEN-LAST:event_r1c2ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r1c2,number);
+        st.push(hm);
+    }                                    
 
-    private void r1c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c3ActionPerformed
+    private void r1c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
-          
         r1c3.setBackground(white);
         r1c3.setText(number);
-    }//GEN-LAST:event_r1c3ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r1c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r2c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c2ActionPerformed
+    private void r2c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-          
-        r2c2.setBackground(white);
+      r2c2.setBackground(white);
         r2c2.setText(number);
-    }//GEN-LAST:event_r2c2ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r2c2,number);
+        st.push(hm);
+    }                                    
 
-    private void r2c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c3ActionPerformed
+    private void r2c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
           
+           
         r2c3.setBackground(white);
         r2c3.setText(number);
-    }//GEN-LAST:event_r2c3ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r2c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r3c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c2ActionPerformed
+    private void r3c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
+          
           
         r3c2.setBackground(white);
         r3c2.setText(number);
-    }//GEN-LAST:event_r3c2ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r3c2,number);
+        st.push(hm);
+    }                                    
 
-    private void r1c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c5ActionPerformed
+    private void r1c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
           
+         
         r1c5.setBackground(white);
         r1c5.setText(number);
-    }//GEN-LAST:event_r1c5ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r1c5,number);
+        st.push(hm);
+    }                                    
 
-    private void r1c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c6ActionPerformed
+    private void r1c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
         r1c6.setBackground(white);
         r1c6.setText(number);
-    }//GEN-LAST:event_r1c6ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r1c6,number);
+        st.push(hm);
+    }                                    
 
-    private void r2c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c4ActionPerformed
+    private void r2c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
         r2c4.setBackground(white);
         r2c4.setText(number);
-    }//GEN-LAST:event_r2c4ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r2c4,number);
+        st.push(hm);
+    }                                    
 
-    private void r3c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c4ActionPerformed
+    private void r3c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
         r3c4.setBackground(white);
         r3c4.setText(number);
-    }//GEN-LAST:event_r3c4ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r3c4,number);
+        st.push(hm);
+    }                                    
 
-    private void r3c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c6ActionPerformed
+    private void r3c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
         r3c6.setBackground(white);
         r3c6.setText(number);
-    }//GEN-LAST:event_r3c6ActionPerformed
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r3c6,number);
+        st.push(hm);
+    }                                    
 
-    private void r2c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c8ActionPerformed
+    private void r2c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-       r2c8.setBackground(white);
-       r2c8.setText(number);
-    }//GEN-LAST:event_r2c8ActionPerformed
+        r2c8.setBackground(white);
+        r2c8.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r2c8,number);
+        st.push(hm);
+    }                                    
 
-    private void r3c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c7ActionPerformed
+    private void r3c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
-       r3c7.setBackground(white);
-       r3c7.setText(number);
-    }//GEN-LAST:event_r3c7ActionPerformed
+        r3c7.setBackground(white);
+        r3c7.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r3c7,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c1ActionPerformed
+    private void r4c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
-      r4c1.setBackground(white);
-      r4c1.setText(number);
-    }//GEN-LAST:event_r4c1ActionPerformed
+        r4c1.setBackground(white);
+        r4c1.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c1,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c2ActionPerformed
+    private void r4c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
-      r4c2.setBackground(white);
-      r4c2.setText(number);
-    }//GEN-LAST:event_r4c2ActionPerformed
+        r4c2.setBackground(white);
+        r4c2.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c2,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c3ActionPerformed
+    private void r4c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r4c3.setBackground(white);
-      r4c3.setText(number);
-    }//GEN-LAST:event_r4c3ActionPerformed
+        r4c3.setBackground(white);
+        r4c3.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r5c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c1ActionPerformed
+    private void r5c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r5c1.setBackground(white);
-      r5c1.setText(number);
-    }//GEN-LAST:event_r5c1ActionPerformed
+        r5c1.setBackground(white);
+        r5c1.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r5c1,number);
+        st.push(hm);
+    }                                    
 
-    private void r6c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c1ActionPerformed
+    private void r6c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r6c1.setBackground(white);
-      r6c1.setText(number);
-    }//GEN-LAST:event_r6c1ActionPerformed
+        r6c1.setBackground(white);
+        r6c1.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c1,number);
+        st.push(hm);
+    }                                    
 
-    private void r6c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c3ActionPerformed
+    private void r6c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
         
-      r6c3.setBackground(white);
-      r6c3.setText(number);
-    }//GEN-LAST:event_r6c3ActionPerformed
+        r6c3.setBackground(white);
+        r6c3.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c7ActionPerformed
+    private void r4c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
-      r4c7.setBackground(white);
-      r4c7.setText(number);
-    }//GEN-LAST:event_r4c7ActionPerformed
+        r4c7.setBackground(white);
+        r4c7.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c7,number);
+        st.push(hm);
+    }                                    
 
-    private void r4c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c9ActionPerformed
-       
-      r4c9.setBackground(white);
-      r4c9.setText(number);
-    }//GEN-LAST:event_r4c9ActionPerformed
+    private void r4c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+     
+        r4c9.setBackground(white);
+        r4c9.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r4c9,number);
+        st.push(hm);
+    }                                    
 
-    private void r5c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c9ActionPerformed
+    private void r5c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
-      r5c9.setBackground(white);
-      r5c9.setText(number);
-    }//GEN-LAST:event_r5c9ActionPerformed
+     
+        r5c9.setBackground(white);
+        r5c9.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r5c9,number);
+        st.push(hm);
+    }                                    
 
-    private void r6c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c7ActionPerformed
+    private void r6c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r6c7.setBackground(white);
-      r6c7.setText(number);
-    }//GEN-LAST:event_r6c7ActionPerformed
+     
+        r6c7.setBackground(white);
+        r6c7.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c7,number);
+        st.push(hm);
+    }                                    
 
-    private void r6c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c8ActionPerformed
+    private void r6c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r6c8.setBackground(white);
-      r6c8.setText(number);
-    }//GEN-LAST:event_r6c8ActionPerformed
+        r6c8.setBackground(white);
+        r6c8.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r6c8,number);
+        st.push(hm);
+    }                                    
 
-    private void r7c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c1ActionPerformed
+    private void r7c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
-      r7c1.setBackground(white);
-      r7c1.setText(number);
-    }//GEN-LAST:event_r7c1ActionPerformed
+        r7c1.setBackground(white);
+        r7c1.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r7c1,number);
+        st.push(hm);
+    }                                    
 
-    private void r7c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c3ActionPerformed
+    private void r7c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r7c3.setBackground(white);
-      r7c3.setText(number);
-    }//GEN-LAST:event_r7c3ActionPerformed
-
-    private void r8c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c2ActionPerformed
-        
-      r8c2.setBackground(white);
-      r8c2.setText(number);
-    }//GEN-LAST:event_r8c2ActionPerformed
-
-    private void r8c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c3ActionPerformed
       
-      r8c3.setBackground(white);
-      r8c3.setText(number);
-    }//GEN-LAST:event_r8c3ActionPerformed
+        r7c3.setBackground(white);
+        r7c3.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r7c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r7c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c4ActionPerformed
+    private void r8c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r7c4.setBackground(white);
-      r7c4.setText(number);
-    }//GEN-LAST:event_r7c4ActionPerformed
+       r8c2.setBackground(white);
+        r8c2.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r8c2,number);
+        st.push(hm);
+    }                                    
 
-    private void r7c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c6ActionPerformed
-       
-      r7c6.setBackground(white);
-      r7c6.setText(number);
-    }//GEN-LAST:event_r7c6ActionPerformed
-
-    private void r8c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c6ActionPerformed
-       
-      r8c6.setBackground(white);
-      r8c6.setText(number);
-    }//GEN-LAST:event_r8c6ActionPerformed
-
-    private void r9c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c4ActionPerformed
+    private void r8c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
-      r9c4.setBackground(white);
-      r9c4.setText(number);
-    }//GEN-LAST:event_r9c4ActionPerformed
+       r8c3.setBackground(white);
+        r8c3.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r8c3,number);
+        st.push(hm);
+    }                                    
 
-    private void r9c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c5ActionPerformed
-       
-      r9c5.setBackground(white);
-      r9c5.setText(number);
-    }//GEN-LAST:event_r9c5ActionPerformed
-
-    private void r7c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c8ActionPerformed
+    private void r7c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
-      r7c8.setBackground(white);
-      r7c8.setText(number);
-    }//GEN-LAST:event_r7c8ActionPerformed
+     r7c4.setBackground(white);
+        r7c4.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r7c4,number);
+        st.push(hm);
+    }                                    
 
-    private void r8c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c7ActionPerformed
+    private void r7c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+        r7c6.setBackground(white);
+        r7c6.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r7c6,number);
+        st.push(hm);
+    }                                    
+
+    private void r8c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+        r8c6.setBackground(white);
+        r8c6.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r8c6,number);
+        st.push(hm);
+    }                                    
+
+    private void r9c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+      
+       r9c4.setBackground(white);
+        r9c4.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r9c4,number);
+        st.push(hm);
+    }                                    
+
+    private void r9c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+       r9c5.setBackground(white);
+        r9c5.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r9c5,number);
+        st.push(hm);
+    }                                    
+
+    private void r7c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+        r7c8.setBackground(white);
+        r7c8.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r7c8,number);
+        st.push(hm);
+    }                                    
+
+    private void r8c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+        r8c7.setBackground(white);
+        r8c7.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r8c7,number);
+        st.push(hm);
+    }                                    
+
+    private void r8c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
              
-      r8c7.setBackground(white);
-      r8c7.setText(number);
-    }//GEN-LAST:event_r8c7ActionPerformed
+        r8c8.setBackground(white);
+        r8c8.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r8c8,number);
+        st.push(hm);
+    }                                    
 
-    private void r8c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c8ActionPerformed
+    private void r9c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
+       
+        r9c7.setBackground(white);
+        r9c7.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r9c7,number);
+        st.push(hm);
+    }                                    
+
+    private void r9c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
              
-      r8c8.setBackground(white);
-      r8c8.setText(number);
-    }//GEN-LAST:event_r8c8ActionPerformed
+        r9c8.setBackground(white);
+        r9c8.setText(number);
+        HashMap<JButton,String>hm = new HashMap<JButton,String>();
+        hm.put(r9c8,number);
+        st.push(hm);
+    }                                    
 
-    private void r9c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c7ActionPerformed
-       
-             
-      r9c7.setBackground(white);
-      r9c7.setText(number);
-    }//GEN-LAST:event_r9c7ActionPerformed
-
-    private void r9c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c8ActionPerformed
-       
-             
-      r9c8.setBackground(white);
-      r9c8.setText(number);
-    }//GEN-LAST:event_r9c8ActionPerformed
-
-    private void r4c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c5ActionPerformed
+    private void r4c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
         JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r4c5ActionPerformed
+    }                                    
 
-    private void r4c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c6ActionPerformed
+    private void r4c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r4c6ActionPerformed
+    }                                    
 
-    private void r6c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c4ActionPerformed
+    private void r6c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r6c4ActionPerformed
+    }                                    
 
-    private void r6c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c5ActionPerformed
+    private void r6c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r6c5ActionPerformed
+    }                                    
 
-    private void r4c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c8ActionPerformed
+    private void r4c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r4c8ActionPerformed
+    }                                    
 
-    private void r5c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c7ActionPerformed
+    private void r5c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r5c7ActionPerformed
+    }                                    
 
-    private void r5c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c8ActionPerformed
+    private void r5c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r5c8ActionPerformed
+    }                                    
 
-    private void r5c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c2ActionPerformed
+    private void r5c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r5c2ActionPerformed
+    }                                    
 
-    private void r5c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c3ActionPerformed
+    private void r5c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r5c3ActionPerformed
+    }                                    
 
-    private void r6c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c2ActionPerformed
+    private void r6c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r6c2ActionPerformed
+    }                                    
 
-    private void r7c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c2ActionPerformed
+    private void r7c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r7c2ActionPerformed
+    }                                    
 
-    private void r8c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c1ActionPerformed
+    private void r8c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r8c1ActionPerformed
+    }                                    
 
-    private void r9c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c1ActionPerformed
+    private void r9c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r9c1ActionPerformed
+    }                                    
 
-    private void r9c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c2ActionPerformed
+    private void r9c2ActionPerformed(java.awt.event.ActionEvent evt) {                                     
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r9c2ActionPerformed
+    }                                    
 
-    private void r9c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c3ActionPerformed
+    private void r9c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r9c3ActionPerformed
+    }                                    
 
-    private void r7c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c5ActionPerformed
+    private void r7c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r7c5ActionPerformed
+    }                                    
 
-    private void r8c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c4ActionPerformed
+    private void r8c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r8c4ActionPerformed
+    }                                    
 
-    private void r8c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c5ActionPerformed
+    private void r8c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r8c5ActionPerformed
+    }                                    
 
-    private void r9c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c6ActionPerformed
+    private void r9c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r9c6ActionPerformed
+    }                                    
 
-    private void r7c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c7ActionPerformed
+    private void r7c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r7c7ActionPerformed
+    }                                    
 
-    private void r7c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c9ActionPerformed
+    private void r7c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r7c9ActionPerformed
+    }                                    
 
-    private void r8c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c9ActionPerformed
+    private void r8c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r8c9ActionPerformed
+    }                                    
 
-    private void r1c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c7ActionPerformed
+    private void r1c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r1c7ActionPerformed
+    }                                    
 
-    private void r1c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c8ActionPerformed
+    private void r1c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r1c8ActionPerformed
+    }                                    
 
-    private void r1c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c9ActionPerformed
+    private void r1c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r1c9ActionPerformed
+    }                                    
 
-    private void r2c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c7ActionPerformed
+    private void r2c7ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r2c7ActionPerformed
+    }                                    
 
-    private void r2c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c9ActionPerformed
+    private void r2c9ActionPerformed(java.awt.event.ActionEvent evt) {                                     
        
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r2c9ActionPerformed
+    }                                    
 
-    private void r3c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c8ActionPerformed
+    private void r3c8ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r3c8ActionPerformed
+    }                                    
 
-    private void r1c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c4ActionPerformed
+    private void r1c4ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r1c4ActionPerformed
+    }                                    
 
-    private void r2c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c5ActionPerformed
+    private void r2c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r2c5ActionPerformed
+    }                                    
 
-    private void r2c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c6ActionPerformed
+    private void r2c6ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r2c6ActionPerformed
+    }                                    
 
-    private void r3c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c5ActionPerformed
+    private void r3c5ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r3c5ActionPerformed
+    }                                    
 
-    private void r2c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c1ActionPerformed
+    private void r2c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r2c1ActionPerformed
+    }                                    
 
-    private void r3c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c1ActionPerformed
+    private void r3c1ActionPerformed(java.awt.event.ActionEvent evt) {                                     
         
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r3c1ActionPerformed
+    }                                    
 
-    private void r3c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c3ActionPerformed
+    private void r3c3ActionPerformed(java.awt.event.ActionEvent evt) {                                     
       
          JOptionPane.showMessageDialog(this,"This place is already been allocated","Sudoku game",JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_r3c3ActionPerformed
+    }                                    
 
-    private void jButton136ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton136ActionPerformed
+    private void jButton136ActionPerformed(java.awt.event.ActionEvent evt) {                                           
        
         JFrame frame = new JFrame("Exit");
        if(JOptionPane.showConfirmDialog(frame,"confirm if you want to Exit","Sudoku Game",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION){
            
            System.exit(0);
        }
-    }//GEN-LAST:event_jButton136ActionPerformed
+    }                                          
 
-    private void SolutionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SolutionButtonActionPerformed
+    private void SolutionButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         
         seeSolution();
-    }//GEN-LAST:event_SolutionButtonActionPerformed
+    }                                              
 
-    private void CheckMovesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckMovesButtonActionPerformed
+    private void CheckMovesButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         
         CheckMoves();
-    }//GEN-LAST:event_CheckMovesButtonActionPerformed
+    }                                                
 
-    private void ResetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetButtonActionPerformed
+    private void ResetButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
         
         resetGame();
-    }//GEN-LAST:event_ResetButtonActionPerformed
+    }                                           
+
+    private void UndoButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        Undo();
+    }                                          
 
     /**
      * @param args the command line arguments
@@ -2245,7 +2437,7 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton CheckMovesButton;
     private javax.swing.JButton ResetButton;
     private javax.swing.JButton SelectionButton1;
@@ -2352,5 +2544,5 @@ public class SUDOKU_FRAME2 extends javax.swing.JFrame {
     private javax.swing.JButton r9c7;
     private javax.swing.JButton r9c8;
     private javax.swing.JButton r9c9;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
